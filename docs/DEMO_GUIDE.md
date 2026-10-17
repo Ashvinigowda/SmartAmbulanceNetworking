@@ -30,13 +30,13 @@ Mode 2 = VO (Voice)
 
 ## 6. Open the saved graphs
 
-explorer.exe "$(wslpath -w experiment_results/graphs)"
+explorer.exe "$(wslpath -w results/experiment_results/graphs)"
 
 ## 7. Inspect saved results
 
-head -6 experiment_results/load_summary.csv
-head -6 experiment_results/fairness_modes_summary.csv
-head -6 experiment_results/fairness_summary.csv
-find experiment_results -maxdepth 3 -type f | sort
+head -6 results/experiment_results/load_summary.csv
+head -6 results/experiment_results/fairness_modes_summary.csv
+head -6 results/experiment_results/fairness_summary.csv
+find results/experiment_results -maxdepth 3 -type f | sort
 
 Note: Run simulation commands from the NS-3.45 directory, not this package directory.
