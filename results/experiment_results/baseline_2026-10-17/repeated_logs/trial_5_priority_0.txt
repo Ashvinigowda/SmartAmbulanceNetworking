@@ -1,0 +1,68 @@
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+
+=== AMBULANCE CONGESTION SIMULATION ===
+Sources: 10
+Rate per source: 2Mbps
+Priority: OFF
+Ambulance 0 | ToS=0
+Normal source 1 | ToS=0
+Normal source 2 | ToS=0
+Normal source 3 | ToS=0
+Normal source 4 | ToS=0
+Normal source 5 | ToS=0
+Normal source 6 | ToS=0
+Normal source 7 | ToS=0
+Normal source 8 | ToS=0
+Normal source 9 | ToS=0
+
+=== FLOW RESULTS ===
+
+Flow 1 | Source 10.1.1.1
+TX packets: 8300 | RX packets: 575 | FlowMonitor lost: 3531
+Throughput: 141.985 kbps | Delay: 360.298 ms | Jitter: 3.039 ms
+
+Flow 2 | Source 10.1.1.2
+TX packets: 8282 | RX packets: 776 | FlowMonitor lost: 3291
+Throughput: 192.863 kbps | Delay: 310.222 ms | Jitter: 2.635 ms
+
+Flow 3 | Source 10.1.1.3
+TX packets: 8264 | RX packets: 892 | FlowMonitor lost: 3297
+Throughput: 221.262 kbps | Delay: 383.650 ms | Jitter: 2.854 ms
+
+Flow 4 | Source 10.1.1.4
+TX packets: 8246 | RX packets: 746 | FlowMonitor lost: 3379
+Throughput: 187.927 kbps | Delay: 423.683 ms | Jitter: 2.988 ms
+
+Flow 5 | Source 10.1.1.5
+TX packets: 8228 | RX packets: 879 | FlowMonitor lost: 3243
+Throughput: 219.291 kbps | Delay: 360.432 ms | Jitter: 2.735 ms
+
+Flow 6 | Source 10.1.1.6
+TX packets: 8210 | RX packets: 1005 | FlowMonitor lost: 3224
+Throughput: 250.742 kbps | Delay: 330.362 ms | Jitter: 2.717 ms
+
+Flow 7 | Source 10.1.1.7
+TX packets: 8192 | RX packets: 1173 | FlowMonitor lost: 3092
+Throughput: 293.469 kbps | Delay: 402.840 ms | Jitter: 2.731 ms
+
+Flow 8 | Source 10.1.1.8
+TX packets: 8174 | RX packets: 989 | FlowMonitor lost: 3246
+Throughput: 248.143 kbps | Delay: 457.884 ms | Jitter: 3.068 ms
+
+Flow 9 | Source 10.1.1.9
+TX packets: 8156 | RX packets: 1661 | FlowMonitor lost: 2790
+Throughput: 417.370 kbps | Delay: 381.673 ms | Jitter: 2.532 ms
+
+Flow 10 | Source 10.1.1.10
+TX packets: 8138 | RX packets: 2240 | FlowMonitor lost: 2506
+Throughput: 564.036 kbps | Delay: 397.115 ms | Jitter: 1.944 ms
+
+=== AGGREGATE RESULTS ===
+Priority: OFF
+Rate per source: 2Mbps
+Total TX: 82190
+Total RX: 10936
+FlowMonitor lost count: 31599
+Delivery ratio: 13.31%
+Saved: ambulance-priority-disabled.xml

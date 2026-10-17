@@ -1,0 +1,57 @@
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+
+=== AMBULANCE FAIRNESS EXPERIMENT ===
+Sources: 10
+Rate per source: 2Mbps
+Ambulance mode: BE
+Ambulance 0 | ToS=0
+Normal source 1 | ToS=0
+Normal source 2 | ToS=0
+Normal source 3 | ToS=0
+Normal source 4 | ToS=0
+Normal source 5 | ToS=0
+Normal source 6 | ToS=0
+Normal source 7 | ToS=0
+Normal source 8 | ToS=0
+Normal source 9 | ToS=0
+
+=== FLOW RESULTS ===
+Flow 1 | Source 10.1.1.1
+TX packets: 8300 | RX packets: 953 | FlowMonitor lost: 3176
+Throughput: 235.797 kbps | Delay: 257.335 ms | Jitter: 2.395 ms
+Flow 2 | Source 10.1.1.2
+TX packets: 8282 | RX packets: 978 | FlowMonitor lost: 3151
+Throughput: 248.984 kbps | Delay: 315.479 ms | Jitter: 2.428 ms
+Flow 3 | Source 10.1.1.3
+TX packets: 8264 | RX packets: 864 | FlowMonitor lost: 3239
+Throughput: 214.180 kbps | Delay: 374.752 ms | Jitter: 2.644 ms
+Flow 4 | Source 10.1.1.4
+TX packets: 8246 | RX packets: 531 | FlowMonitor lost: 3654
+Throughput: 131.955 kbps | Delay: 504.401 ms | Jitter: 7.055 ms
+Flow 5 | Source 10.1.1.5
+TX packets: 8228 | RX packets: 1039 | FlowMonitor lost: 3126
+Throughput: 259.855 kbps | Delay: 396.590 ms | Jitter: 2.625 ms
+Flow 6 | Source 10.1.1.6
+TX packets: 8210 | RX packets: 1032 | FlowMonitor lost: 3062
+Throughput: 257.540 kbps | Delay: 385.642 ms | Jitter: 2.569 ms
+Flow 7 | Source 10.1.1.7
+TX packets: 8192 | RX packets: 1276 | FlowMonitor lost: 2988
+Throughput: 320.002 kbps | Delay: 371.788 ms | Jitter: 2.558 ms
+Flow 8 | Source 10.1.1.8
+TX packets: 8174 | RX packets: 1346 | FlowMonitor lost: 2962
+Throughput: 337.367 kbps | Delay: 378.472 ms | Jitter: 2.672 ms
+Flow 9 | Source 10.1.1.9
+TX packets: 8156 | RX packets: 1815 | FlowMonitor lost: 2665
+Throughput: 455.878 kbps | Delay: 341.132 ms | Jitter: 2.543 ms
+Flow 10 | Source 10.1.1.10
+TX packets: 8138 | RX packets: 2302 | FlowMonitor lost: 2454
+Throughput: 579.437 kbps | Delay: 348.631 ms | Jitter: 1.810 ms
+
+=== AGGREGATE RESULTS ===
+Ambulance mode: BE
+Total TX: 82190
+Total RX: 12136
+FlowMonitor lost count: 30477
+Delivery ratio: 14.77%
+Saved: ambulance-fairness-BE-sources-10.xml

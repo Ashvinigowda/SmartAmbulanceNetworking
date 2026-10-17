@@ -1,0 +1,7 @@
+sources,data_rate_per_source,priority,ambulance_source_ip,ambulance_tx_packets,ambulance_rx_packets,ambulance_flowmonitor_lost,ambulance_throughput_kbps,ambulance_delay_ms,ambulance_jitter_ms,aggregate_tx_packets,aggregate_rx_packets,aggregate_flowmonitor_lost,aggregate_delivery_ratio_pct,log_file
+2,2Mbps,OFF,10.1.1.1,8300,8299,1,2109.359,0.132,0.013,16582,16580,2,99.98793872874201,experiment_results/logs/sources_2_priority_off.txt
+2,2Mbps,ON,10.1.1.1,8300,8299,1,2109.358,0.129,0.013,16582,16579,3,99.98190809311302,experiment_results/logs/sources_2_priority_on.txt
+5,2Mbps,OFF,10.1.1.1,8300,8299,1,2109.357,0.154,0.039,41320,41316,4,99.99031945788964,experiment_results/logs/sources_5_priority_off.txt
+5,2Mbps,ON,10.1.1.1,8300,8299,1,2109.358,0.171,0.073,41320,41316,4,99.99031945788964,experiment_results/logs/sources_5_priority_on.txt
+10,2Mbps,OFF,10.1.1.1,8300,1024,3112,254.194,270.932,2.419,82190,11487,30935,13.97615281664436,experiment_results/logs/sources_10_priority_off.txt
+10,2Mbps,ON,10.1.1.1,8300,8266,16,2099.84,4.292,2.592,82190,16787,29468,20.424625866893784,experiment_results/logs/sources_10_priority_on.txt

@@ -1,0 +1,28 @@
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+
+=== AMBULANCE CONGESTION SIMULATION ===
+Sources: 2
+Rate per source: 2Mbps
+Priority: ON
+Ambulance 0 | ToS=192
+Normal source 1 | ToS=0
+
+=== FLOW RESULTS ===
+
+Flow 1 | Source 10.1.1.1
+TX packets: 8300 | RX packets: 8300 | FlowMonitor lost: 0
+Throughput: 2109.613 kbps | Delay: 0.130 ms | Jitter: 0.012 ms
+
+Flow 2 | Source 10.1.1.2
+TX packets: 8282 | RX packets: 8281 | FlowMonitor lost: 1
+Throughput: 2109.295 kbps | Delay: 0.733 ms | Jitter: 0.105 ms
+
+=== AGGREGATE RESULTS ===
+Priority: ON
+Rate per source: 2Mbps
+Total TX: 16582
+Total RX: 16581
+FlowMonitor lost count: 1
+Delivery ratio: 99.99%
+Saved: ambulance-priority-enabled.xml
