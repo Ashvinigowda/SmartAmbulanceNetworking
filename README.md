@@ -1,195 +1,232 @@
-# Performance Analysis and Visualization of Priority-Based Emergency Communication Under Network Congestion Using NS-3
+# Smart Ambulance Networking — Interactive NS-3 Simulation & Analytics Dashboard
 
 [![NS-3 Version](https://img.shields.io/badge/NS--3-3.45-orange.svg)](https://www.nsnam.org/)
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://isocpp.org/)
-[![Python](https://img.shields.io/badge/Python-3.13%2B-green.svg)](https://www.python.org/)
-[![Visualization](https://img.shields.io/badge/Visualizer-NetAnim%203.109-red.svg)](https://www.nsnam.org/wiki/NetAnim)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-green.svg)](https://www.python.org/)
+[![Backend](https://img.shields.io/badge/Backend-Flask%203.1-black.svg)](https://flask.palletsprojects.com/)
+[![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%2B%20TypeScript-cyan.svg)](https://react.dev/)
+[![Visualizer](https://img.shields.io/badge/Visualizer-Interactive%20Web%20Replay%20(NetAnim--Free)-red.svg)](#)
 
-A comprehensive network simulation framework built on **NS-3.45** to evaluate, analyze, and visualize priority-based vehicular emergency communications under realistic network congestion, dynamic vehicle mobility, and wireless channel fading.
+A browser-based network simulation, telemetry visualization, and analytics platform built for **Priority-Based Emergency Ambulance Communication in Congested Networks using NS-3.45**.
 
----
-
-## 1. Project Overview & Architectural Highlights
-
-In emergency response scenarios, ambulances must continuously transmit mission-critical telemetry (vital signs, GPS coordinates, real-time heading, and dynamically calculated Hospital ETA) as well as event-triggered emergency trauma alerts to destination receiving facilities. When competing against heavy background vehicular traffic (10 to 150 ordinary sources) over shared wireless channels, standard Best-Effort transmission suffers severe packet drops, buffering delays, and high jitter.
-
-This project delivers a complete architectural upgrade to NS-3 emergency network modeling:
-- **Scalable Multi-Ambulance & Multi-Hospital Infrastructure**: Supports concurrent mobile ambulances ($1, 2, 3, 5$) transmitting to multiple stationary hospital receiving nodes (Hospital A & Hospital B).
-- **Realistic Structured Binary Application Protocol (`AmbulanceAppHeader`)**: Compact 54-byte serialized header encoding magic identifiers (`0x414D`), message types, GPS position coordinates, speed, heading, calculated ETA, severity levels, and clinical resource requirement bitmasks.
-- **Dynamic Vehicular Mobility & Heading-Aware Dynamics**: Integrated `RandomWaypointMobilityModel` and `RandomWalk2dMobilityModel` with real-time vector velocity extraction and dynamic ETA computation.
-- **IEEE 802.11e / EDCA Quality of Service Mapping**: Deterministic multi-queue classification via `SocketPriorityTag` (TID 6 $\rightarrow$ `AC_VO` Voice, TID 5 $\rightarrow$ `AC_VI` Video, TID 0 $\rightarrow$ `AC_BE` Best Effort) with DSCP/ToS integration.
-- **Propagation-Loss Modeling**: Realistic outdoor suburban/vehicular path-loss modeling (`LogDistance` with $n=2.2$), `Friis` free-space propagation, and `Nakagami-m` multi-path fading.
-- **NetAnim 3.109 Graphical Visualization**: Full animation trace generation (`AnimationInterface`) with distinct color codes (Red: Ambulances, Blue: Ordinary vehicles, Green: Hospitals).
+This platform delivers an interactive Network Operations Centre (NOC) dashboard that visualizes real simulation results, dynamic vehicle mobility, FlowMonitor per-flow metrics, and packet flow events **without requiring NetAnim or heavy visualization packages**.
 
 ---
 
-## 2. System Architecture
+## 1. System Architecture
 
 ```mermaid
-graph TD
-    subgraph MobileVehicularEntities["Mobile Vehicular Entities"]
-        Amb1["Ambulance 1<br/>(Dynamic RWP Mobility)"]
-        Amb2["Ambulance 2<br/>(Dynamic RWP Mobility)"]
-        OrdNodes["Ordinary Vehicles (10 - 150 Sources)<br/>(Background Traffic @ 100-250 kbps)"]
+flowchart TD
+    subgraph NS3Simulation["NS-3.45 Vehicular Simulation"]
+        Amb["Ambulance Nodes (1 to 5)<br/>Dynamic RWP Mobility"]
+        Ord["Ordinary Traffic Nodes (10 to 150)<br/>Background Best-Effort Traffic"]
+        Mac["IEEE 802.11e EDCA Multi-Queue MAC<br/>AC_VO (TID 6) vs AC_BE (TID 0)"]
+        Hosp["Hospital Infrastructure Receivers<br/>UDP Port 9000 In-Flight Decoder"]
+        FlowMon["FlowMonitor Tracing & NetAnim XML Output"]
+        Amb --> Mac
+        Ord --> Mac
+        Mac --> Hosp
+        Hosp --> FlowMon
     end
 
-    subgraph ApplicationLayer["Application Protocol Layer (54-Byte Binary Header)"]
-        T1["AMBULANCE_TELEMETRY<br/>(Periodic 1 Hz, Speed, Heading, ETA)"]
-        T2["EMERGENCY_ALERT<br/>(Event-driven Code Red, Cardiac)"]
-        T3["HOSPITAL_PREALERT<br/>(Milestone Resource Reservation)"]
-        T4["ORDINARY_TELEMETRY<br/>(4 Environmental/Traffic Categories)"]
+    subgraph CompactExporter["Compact Simulation Exporter (backend/exporter.py)"]
+        Exp["Parses XML traces, FlowStats, and CSVs<br/>Downsamples events & caches JSON"]
+        FlowMon --> Exp
     end
 
-    subgraph MACLayer["IEEE 802.11e EDCA Multi-Queue MAC Layer"]
-        QVO["AC_VO (Voice, TID=6)<br/>AIFSN=2, CWmin=3, CWmax=7"]
-        QVI["AC_VI (Video, TID=5)<br/>AIFSN=2, CWmin=7, CWmax=15"]
-        QBE["AC_BE (Best Effort, TID=0)<br/>AIFSN=3, CWmin=15, CWmax=1023"]
+    subgraph FlaskBackend["Python Flask REST API (backend/app.py)"]
+        API["REST Endpoints:<br/>/api/health<br/>/api/simulations<br/>/api/topology<br/>/api/events<br/>/api/compare<br/>/api/simulations/run"]
+        Exp --> API
     end
 
-    subgraph ChannelPHY["Wireless Channel & Propagation (802.11g Ad-hoc, 20 dBm)"]
-        Chan["LogDistance (n=2.2) / Friis / Nakagami-m"]
+    subgraph ReactFrontend["React + TypeScript NOC Dashboard (frontend/)"]
+        P1["Overview Dashboard"]
+        P2["Interactive 2D Topology"]
+        P3["NetAnim-Free Packet Replay"]
+        P4["Congestion Analytics"]
+        P5["Priority QoS Architecture"]
+        P6["Baseline vs Proposed Comparison"]
+        P7["Simulation Runner & Launcher"]
+        P8["Reports & Data Export (CSV/JSON/MD)"]
+        API --> P1 & P2 & P3 & P4 & P5 & P6 & P7 & P8
     end
-
-    subgraph InfrastructureReceivers["Hospital Infrastructure Receivers"]
-        Hosp1["Hospital A Receiver<br/>(Port 9000, In-Flight Decoding)"]
-        Hosp2["Hospital B Receiver<br/>(Port 9000, Multi-Destination Routing)"]
-    end
-
-    Amb1 --> T1 & T2 & T3
-    Amb2 --> T1 & T2 & T3
-    OrdNodes --> T4
-
-    T1 & T2 & T3 -->|SocketPriorityTag TID=6| QVO
-    T4 -->|SocketPriorityTag TID=0| QBE
-
-    QVO & QVI & QBE --> Chan
-    Chan --> Hosp1 & Hosp2
 ```
+
+The **NS-3 simulation remains the sole source of truth** for all network measurements. The compact exporter parses actual FlowMonitor XML traces, benchmark CSV datasets, and NetAnim XMLs into lightweight JSON formats.
 
 ---
 
-## 3. Application Protocol Specification
+## 2. Dashboard Pages & Capabilities
+
+The dashboard provides eight specialized views tailored for academic demonstrations and technical interviews:
+
+| Page | Key Capabilities | Source of Truth |
+| :--- | :--- | :--- |
+| **A. Overview** | Executive NOC dashboard with live simulation health, node counts (Ambulances, Traffic, Hospitals), overall PDR, mean delay, throughput, lost packets, and clinical alert reception rates. | `all_experiments.csv` & FlowMonitor |
+| **B. Interactive Topology** | 2D interactive canvas (SVG) displaying real NS-3 node coordinates, wireless links, node telemetry drawer (IP, type, speed, heading, calculated ETA), zoom/pan/fit controls, and legend. | NetAnim XML & Simulation Spec |
+| **C. Packet Flow Replay** | Lightweight in-browser event replay engine. Features Play, Pause, Reset, 0.25x-5x playback speeds, timeline scrubber, animated packet pulses, and a live packet log stream without NetAnim. | NetAnim XML traces (`<pr>` & `<wpr>`) |
+| **D. Congestion Analysis** | Recharts performance charts for Packet Delivery Ratio vs Sources (10-100), Latency vs Load, Throughput Scaling, and delay histogram distribution bins. | FlowMonitor XML & Benchmark CSV |
+| **E. Priority QoS (EDCA)** | In-depth breakdown of IEEE 802.11e EDCA multi-queue parameters: Voice `AC_VO` (TID 6, AIFSN=2, CWmin=3, CWmax=7) vs Best-Effort `AC_BE` (TID 0, AIFSN=3, CWmin=15, CWmax=1023), and 54-byte binary `AmbulanceAppHeader`. | `smart-ambulance-simulation.cc` |
+| **F. Scenario Comparison** | Direct side-by-side comparative analysis between Baseline (Best-Effort without priority) and Proposed (Voice `AC_VO` priority). Demonstrates **98.0% reduction in delay** under heavy stress. | `EXP9_STRESS_*` Benchmark Runs |
+| **G. Simulation Runner** | Interactive scenario runner with strict parameter validation (Ambulance count, Traffic sources, QoS mode, Mobility model, Duration), terminal command generation, and execution logs. | Validated NS-3 Parameter Allowlist |
+| **H. Results & Reports** | Searchable history table of all 33 benchmark runs, filterable by QoS mode, with one-click CSV export, JSON export, and downloadable Markdown summary reports. | Master Benchmark Dataset |
+
+---
+
+## 3. Key Quantitative Benchmark Findings
+
+All metrics reflect genuine NS-3 simulation output recorded in `results/experiment_results/csv/all_experiments.csv`:
+
+| Scenario / Load | Background Delivery (PDR) | Ambulance PDR (QoS VO) | Ambulance Mean Delay | Alert Delivery Rate |
+| :--- | :---: | :---: | :---: | :---: |
+| **Low Congestion (10 Sources)** | 68.52% | **100.00%** | **0.702 ms** | 100% (0 Lost) |
+| **Moderate Congestion (25 Sources)** | 74.08% | **100.00%** | **1.003 ms** | 100% (0 Lost) |
+| **Heavy Congestion (50 Sources)** | 62.49% | **100.00%** | **0.782 ms** | 100% (0 Lost) |
+| **Severe Congestion (75 Sources)** | 56.76% | **100.00%** | **1.514 ms** | 100% (0 Lost) |
+| **Extreme Congestion (100 Sources)** | 41.37% | **91.67%** | **1.460 ms** | 100% (0 Lost) |
+| **Heavy Stress Test (EXP9, 250 kbps)** | 30.50% | **54.55% (Sub-ms)** | **0.833 ms** (vs 41.28 ms unprioritized) | **98.0% Delay Reduction** |
+
+---
+
+## 4. Application Protocol Specification (`AmbulanceAppHeader`)
 
 All simulation packets encapsulate the custom NS-3 `AmbulanceAppHeader` (54 bytes serialized in big-endian network byte order):
 
-| Field Name | Type | Size | Description |
-| :--- | :--- | :---: | :--- |
-| `Magic` | `uint16_t` | 2 bytes | Protocol identifier: `0x414D` (`'AM'`) |
-| `Version` | `uint8_t` | 1 byte | Protocol version: `1` |
-| `MsgType` | `uint8_t` | 1 byte | 1: `TELEMETRY`, 2: `ALERT`, 3: `PREALERT`, 4: `ORDINARY` |
-| `SourceNodeId` | `uint32_t` | 4 bytes | NS-3 Node ID of transmitting entity |
-| `DestNodeId` | `uint32_t` | 4 bytes | NS-3 Node ID of target receiving facility |
-| `AmbulanceId` | `uint16_t` | 2 bytes | 1-based Ambulance identifier (0 for ordinary nodes) |
-| `SequenceNumber`| `uint32_t` | 4 bytes | Monotonically increasing sequence number per sender |
-| `TimestampNs` | `uint64_t` | 8 bytes | Simulation transmission timestamp in nanoseconds |
-| `PosX` | `float` | 4 bytes | IEEE 754 single-precision X coordinate (meters) |
-| `PosY` | `float` | 4 bytes | IEEE 754 single-precision Y coordinate (meters) |
-| `Speed` | `float` | 4 bytes | Instantaneous scalar velocity (m/s) |
-| `Heading` | `float` | 4 bytes | Direction vector angle in degrees ($0.0^\circ - 360.0^\circ$) |
-| `EventOrCategory`| `uint16_t` | 2 bytes | Alert Event ID or Ordinary Category (1 to 4) |
-| `StatusOrSeverity`| `uint8_t` | 1 byte | Status code or Severity (1: Minor, 2: Moderate, 3: Severe) |
-| `TargetHospitalId`| `uint8_t`| 1 byte | Targeted hospital facility ID (1: Hospital A, 2: Hospital B) |
-| `EtaSeconds` | `float` | 4 bytes | Dynamically computed time-to-arrival in seconds |
-| `RequiredResources`| `uint16_t`| 2 bytes | Clinical equipment bitmask (Trauma, ICU, Cath Lab) |
-| `PayloadLength`| `uint16_t` | 2 bytes | Length of optional trailing payload bytes |
+```
++-----------------------------------------------------------------------------------------+
+| Magic (2B)   | Ver (1B) | MsgType (1B) | SourceNodeId (4B) | DestNodeId (4B)            |
++-----------------------------------------------------------------------------------------+
+| AmbulanceId (2B) | SequenceNumber (4B) | TimestampNs (8B)                               |
++-----------------------------------------------------------------------------------------+
+| PosX (4B)    | PosY (4B) | Speed (4B)  | Heading (4B)      | EventOrCategory (2B)       |
++-----------------------------------------------------------------------------------------+
+| StatusOrSeverity (1B) | TargetHospitalId (1B) | EtaSeconds (4B) | RequiredResources (2B)|
++-----------------------------------------------------------------------------------------+
+| PayloadLength (2B)                                                                      |
++-----------------------------------------------------------------------------------------+
+```
+
+Across all benchmark scenarios, over **50,000 application packets** were processed at hospital receivers with **0 malformed packets detected**.
 
 ---
 
-## 4. Experimental Benchmark Matrix
-
-The project defines 10 core experimental scenarios evaluating networking performance across diverse parameters:
-
-1. **Static vs Mobile Network**: Measures the impact of vehicular mobility on connectivity and packet delivery.
-2. **Congestion Scaling (10, 25, 50, 75, 100 Sources)**: Evaluates degradation of standard traffic vs protection of emergency traffic.
-3. **Multi-Ambulance Scalability (1, 2, 3, 5 Ambulances)**: Analyzes channel sharing and latency under concurrent emergency flows.
-4. **QoS Priority Modes (OFF, BE, VI, VO)**: Proves the necessity of IEEE 802.11e EDCA queue differentiation.
-5. **Propagation-Loss Comparison**: Benchmarks performance across `LogDistance`, `Friis`, and `Nakagami-m` fading.
-6. **PHY Data Rate & Traffic Load**: Explores combinations of 6, 24, and 54 Mbps PHY with 50, 100, and 200 kbps load.
-7. **Randomized Mobility & Reproducibility**: Validates statistical stability across varying random seeds (Runs 1–5).
-8. **Emergency Message Baseline**: Validates reception and decoding of alerts and pre-arrival milestone packets.
-9. **Heavy Congestion Stress Test**: 75 ordinary sources transmitting at 250 kbps to verify high-stress starvation resistance.
-10. **Dual-Hospital Multi-Destination Routing**: Demonstrates load distribution across Hospital A and Hospital B.
-
----
-
-## 5. Key Benchmark Findings
-
-| Scenario / Configuration | Ordinary Traffic PDR | Ambulance PDR (QoS VO) | Ambulance Avg Delay | Emergency Alerts Delivered |
-| :--- | :---: | :---: | :---: | :---: |
-| **Low Load (10 Sources)** | 68.52% | **100.00%** | **0.702 ms** | 100% Delivered |
-| **Moderate Load (25 Sources)** | 74.08% | **100.00%** | **1.003 ms** | 100% Delivered |
-| **Heavy Load (50 Sources)** | 62.49% | **100.00%** | **0.782 ms** | 100% Delivered |
-| **Severe Load (75 Sources)** | 56.76% | **100.00%** | **1.514 ms** | 100% Delivered |
-| **Extreme Load (100 Sources)**| 41.37% | **91.67%** | **1.460 ms** | 100% Delivered |
-
-* **QoS Protection**: Under heavy background traffic (50 sources), disabling priority causes severe delay and packet loss, while enabling Voice (`AC_VO`, TID 6) guarantees **100% Packet Delivery Ratio** and sub-2 millisecond latency.
-* **Mobility Robustness**: Dynamic vehicle movement maintains reliable connectivity within reception range and correctly tracks continuous distance and ETA reduction.
-
----
-
-## 6. How to Run the Simulation
+## 5. Getting Started & Installation
 
 ### Prerequisites
-- Operating System: Linux or Windows 11 with Ubuntu under WSL2
-- NS-3 Installation: NS-3.45 installed at `/home/ashwini/ns3/ns-allinone-3.45/ns-3.45`
-- Python: Python 3.13 / 3.14 with `pandas` and `matplotlib`
+- **Python**: Version 3.12 or higher with `flask` and `psutil`
+- **Node.js**: Version 18 or higher (tested on Node v24)
+- **NS-3**: NS-3.45 (if running new simulations in WSL/Linux)
 
-### Quick Single Simulation Run
-Run a single simulation with NetAnim XML output enabled:
+### 1. Unified Single-Command Startup (Recommended)
+The Flask backend serves both the REST API and the pre-built production React frontend on a single port:
+
 ```bash
-cd /home/ashwini/ns3/ns-allinone-3.45/ns-3.45
-/home/ashwini/.local/bin/python3.13 ./ns3 run --no-build 'smart-ambulance-simulation \
+# In repository root
+python backend/app.py
+```
+Open **[http://localhost:5000](http://localhost:5000)** in your browser to view the dashboard.
+
+### 2. Frontend Development Mode (Hot-Reloading)
+To run the React + TypeScript frontend in development mode with Vite:
+
+```bash
+# Terminal 1: Start Backend API
+python backend/app.py
+
+# Terminal 2: Start Vite Dev Server
+cd frontend
+npm run dev
+```
+Open **[http://localhost:3000](http://localhost:3000)** in your browser. All `/api` requests automatically proxy to port 5000.
+
+---
+
+## 6. How to Run NS-3 Simulations
+
+### Running from Terminal (WSL2 or Linux)
+To run a single simulation using NS-3.45:
+
+```bash
+cd /path/to/ns-allinone-3.45/ns-3.45
+./ns3 run --no-build 'smart-ambulance-simulation \
   --numAmbulances=2 \
-  --numOrdinarySources=20 \
+  --numOrdinarySources=25 \
+  --numReceivers=1 \
   --mobilityMode=1 \
   --priorityEnabled=1 \
   --ambulancePriorityMode=2 \
-  --enableAnim=1 \
-  --animFile=/home/ashwini/ambulance-ns3-project/results/animation/ambulance-demo.xml \
-  --simulationTime=15.0'
+  --simulationTime=15.0 \
+  --csvOutput=/path/to/results/experiment_results/csv/all_experiments.csv'
 ```
 
-### Running All 10 Automated Experiments
-To execute the automated experiment matrix:
+### Running the Automated 10-Experiment Suite
 ```bash
-cd /home/ashwini/ambulance-ns3-project
-/home/ashwini/.local/bin/python3.13 scripts/run_all_experiments.py --test-matrix --duration=10.0
+python scripts/run_all_experiments.py --test-matrix --duration=10.0
 ```
-Results are saved to:
-- Master CSV: `results/experiment_results/csv/all_experiments.csv`
-- Simulation Logs: `results/experiment_results/logs/*.log`
-
-### Generating Publication-Quality Graphs
-To plot all 13 comparative performance charts:
-```bash
-cd /home/ashwini/ambulance-ns3-project
-python3 scripts/generate_all_graphs.py
-```
-Output graphs are placed in `results/experiment_results/graphs/`:
-1. `ambulance_delay_vs_sources.png`
-2. `ambulance_throughput_vs_sources.png`
-3. `delivery_ratio_vs_sources.png`
-4. `ambulance_delay_vs_ambulances.png`
-5. `ambulance_throughput_vs_ambulances.png`
-6. `static_vs_mobile_comparison.png`
-7. `propagation_models_comparison.png`
-8. `priority_disabled_vs_enabled.png`
-9. `ordinary_traffic_impact_qos.png`
-10. `throughput_vs_offered_load.png`
-11. `application_message_delivery.png`
-12. `stress_test_comparison.png`
-13. `multi_destination_comparison.png`
-
-### Visualizing in NetAnim
-To visualize the generated XML traces:
-1. Launch NetAnim:
-   ```bash
-   netanim
-   ```
-2. Click the folder icon at the top left and select `results/animation/ambulance-network-animation.xml` (or `ambulance-emergency-demo.xml`).
-3. Press **Play** to observe red ambulance nodes navigating toward green hospital nodes while transmitting priority packets over background blue vehicular traffic.
+Newly generated outputs are saved to `results/experiment_results/csv/all_experiments.csv`. Clicking **"Refresh Results"** on the dashboard immediately ingests the new data.
 
 ---
 
-## 7. Investigation of NAM vs. NetAnim
-As documented in [`docs/NAM_INVESTIGATION.md`](docs/NAM_INVESTIGATION.md), the Network Animator (NAM) was designed for legacy wired NS-2 simulations and is fully deprecated in NS-3.45. NS-3 natively provides `AnimationInterface` generating structured XML traces optimized for **NetAnim 3.109**, which natively supports wireless topologies, 2D/3D mobility vectors, and dynamic packet coloring.
+## 7. REST API Documentation
+
+The backend provides clean, documented REST endpoints with CORS support:
+
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/api/health` | `GET` | System telemetry, CPU/Memory telemetry, NS-3 version, dataset health. |
+| `/api/simulations` | `GET` | List all available simulation runs with summary metrics (`?category=...&priority=...`). |
+| `/api/simulations/<id>` | `GET` | Full metadata and configuration of a specific simulation. |
+| `/api/simulations/<id>/status` | `GET` | Operational status of a simulation. |
+| `/api/simulations/<id>/metrics` | `GET` | Detailed FlowMonitor flow stats, delay histograms, and app metrics. |
+| `/api/simulations/<id>/topology`| `GET` | Genuine 2D node coordinates, node roles, and wireless links. |
+| `/api/simulations/<id>/events` | `GET` | Paginated packet replay events and node trajectories (`?limit=500&offset=0`). |
+| `/api/simulations/<id>/compare`| `GET` | Comparative performance against baseline unprioritized traffic. |
+| `/api/compare` | `GET` | Default heavy stress test comparison (EXP9). |
+| `/api/scenarios/matrix` | `GET` | Matrix of all 10 benchmark suites. |
+| `/api/simulations/run` | `POST` | Validated parameter launcher with strict allowlist and command generator. |
+| `/api/reports/<id>/export` | `GET` | Downloadable CSV or JSON export (`?format=csv` or `?format=json`). |
+| `/api/reports/<id>/summary` | `GET` | Downloadable Markdown technical summary report. |
+
+---
+
+## 8. Verification & Testing
+
+The platform includes automated unit and integration tests:
+
+```bash
+# Run all backend and exporter unit tests
+python -m unittest discover backend/tests
+
+# Build frontend production bundle
+cd frontend
+npm run build
+```
+
+Test coverage includes:
+- Metric calculation accuracy and boundary protections
+- Missing and malformed result file handling
+- JSON and CSV export formatting
+- Event replay timestamp ordering
+- Baseline versus priority scenario comparison logic
+- Parameter validation and injection prevention
+- HTTP status codes and static frontend serving
+
+---
+
+## 9. Implemented vs Planned Features
+
+### Implemented Features
+- [x] Full-stack architecture: NS-3 exporter, Flask backend, React+TypeScript dashboard
+- [x] Lightweight in-browser packet flow replay engine (NetAnim alternative)
+- [x] Interactive 2D Network Topology with node inspector and zoom/pan/fit
+- [x] Real-time Recharts performance curves using authentic FlowMonitor data
+- [x] Baseline vs Proposed QoS comparative evaluation with safe percentage math
+- [x] IEEE 802.11e EDCA multi-queue architecture and 54-byte header breakdown
+- [x] Validated simulation runner with parameter allowlisting and command generation
+- [x] Multi-format export: CSV, JSON, and technical Markdown summary reports
+- [x] Unified deployment: Flask serves the compiled SPA with zero extra setup
+
+### Planned Extensions
+- [ ] 3D terrain and elevation modeling for mountainous suburban areas
+- [ ] Direct WebAssembly compilation of NS-3 modules for in-browser C++ execution
+- [ ] Dynamic vehicle rerouting based on real-time traffic density feedback

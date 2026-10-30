@@ -10,3 +10,12 @@ compile_commands.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Frontend build & dependencies
+frontend/node_modules/
+# frontend/dist/ (Tracked to allow immediate zero-dependency backend serving)
+frontend/.vite/
+
+# Temporary generated logs
+*.log
+scratch/
